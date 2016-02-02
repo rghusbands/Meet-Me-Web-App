@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html lang="en"> <head>
+<title>Appointments</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<script type="text/javascript" 
+    src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
+<script type="text/javascript" 
+    src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<link rel="stylesheet" type="text/css" 
+    href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.css" />
+ 
+<!-- Include Date Range Picker -->
+<script type="text/javascript" 
+    src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" 
+    href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+
+</head>
+
+<body>
+<div class="container">
+
+{% if session.final_proposal is defined %}
+    <center><h1>Meeting Proposal</h1></center>
+
+{% endif %}
+
+{% if session.final_proposal is defined %}
+    <form action="/goback" method="post">
+        <div class="row">
+            <button class="btn btn-success" type="submit">Go Back</button>
+        </div>
+    </form>
+{% endif %}
+
+{% if not session.final_proposal is defined %}
+    <center><h1>Meet Me Project</h1></center>
+
+{% if not session.finalMeetingID is defined %}
+<div class="row">
+    <h2>Finalize:</h2>
+</div>
+<div class="row">
+    <i>Please wait until everyone has entered their busy times after giving them the url given below after you submit your busy times. Then press the button with given key so Meet Me Messages displays potential meetings times. Keep track of your key if you want to check potential meeting times again.
+    </i>
+</div>
+<div class="row">
+    <form action="/finalizeMeeting" method="post">
+        <input class="col-md-4" name="finalMeetingID" placeholder="MeetingID (ex. 384954)">
+        <button class="btn btn-primary" type="submit">Finalize</button>
+    </form>
+</div>
+{% endif %}
+
+{% if session.finalMeetingID is defined %}
+<div class="row">
+    <h2>Instructions:</h2>
+</div>
+<div class="row">
+    <i>Select your desired date range and then choose the calendars you'd like to use to get your busy times. Once you submit your calendars you can wait for the meeting proposer to contact you which time he/she would like to meet at.</i>
+</div>
+{% endif %}
+
+<div class="row">
+    <h2>Date range:</h2>
+</div>
+<div class="row">
+  <form action="/setrange" method="post">
+  <input type="text" name="daterange" size="16"
+    {% if session.daterange is defined %}
+         value="{{session.daterange}}"
+    {% endif %}
+     class="pull-down"
+     style="background: #fff; cursor: pointer; padding: 5px 10px;
+     border: 1px solid #ccc; width: 12em" >
+  <script type="text/javascript">
+  $(function() {
+  $('input[name="daterange"]').daterangepicker(
+    {    ranges: {
+           'Today': [moment(), moment()],
+           'Tomorrow':[moment().add(1, 'days'),
+                       moment().add(1, 'days')], 
+           'This week':[moment(), moment().endOf('week')],
+           'Next week':[moment().add(7, 'days').startOf('week'),
+                        moment().add(7, 'days').endOf('week')],
+           'This month':[moment(), moment().endOf('month')],
+           'Within two weeks':[moment(),moment().add(15, 'days')]
+        }}
+       );
+    });
+  </script>
+<input type="submit" class="btn btn-primary" value="Choose" />
+
+</form>
+</div>
+
+
+<div class="row">
+{% if session.calendars is defined  %}
+<div class="row">
+    <h2>Calendars:</h2>
+</div>
+  <form action="/select_calendars" method="post">
+  {% for cal in session.calendars if cal.selected %}
+          <div class="col-md-4">
+              <label class="checkbox">
+                <input type="checkbox" name="calendar"
+                    value="{{ cal.id }}">{{ cal.summary }}</input>
+              </label>
+          </div>
+         {% if loop.index is divisibleby 3 %}
+            </div><div class="row">
+         {% endif %}
+  {% endfor %}
+  <div class="row">
+      <button class="btn btn-primary" type="submit">Submit</button>
+  </div>
+  </form>
+{% endif %}
+</div>
+    
+{% endif %}
+
+{% if not session.finalMeetingID is defined %}
+<div class="row">
+    {% if not session.final_proposal is defined %}
+        <h2>Meet Me Messages:</h2>
+    {% endif %}
+    {% if session.final_proposal is defined %}
+        <h2>Potential Meeting times below:</h2>
+    {% endif %}
+</div>
+{% endif %}
+<div class="row">
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+</div>
+{% if session.final_proposal is defined %}
+    <form action="/deleteproposal" method="post">
+        <div class="row">
+            <button class="btn btn-danger" type="submit">Delete Proposal</button>
+        </div>
+    </form>
+    <i>Please don't refresh the page. If you don't delete the proposal you can use the key to look at meetings times again!</i>
+{% endif %}
+
+</div>  <!--container (for bootstrap)-->
+</body>
+</html>

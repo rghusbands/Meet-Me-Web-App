@@ -1,1 +1,1 @@
-# Meet-Me-Web-AppMeet Me Web app uses google calendar api to calculate times for multiple users to potentially meet.Web user interface with python server code.Uses:    -HTML    -Python3    -Jinja2    -Flask    -MongoDB
+# Meet-Me-Web-AppMeet Me Web app uses google calendar api to calculate times for multiple users to potentially meet.Web user interface with python server code.Uses:    -HTML    -Python3    -Jinja2        -Flask    -MongoDBIn order to run:python3 main.py     #sets up serverconnect in web browswer using: ix.cs.uoregon.edu:6996
